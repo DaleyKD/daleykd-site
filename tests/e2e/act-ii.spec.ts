@@ -15,10 +15,16 @@ test.describe("/career/act-ii", () => {
     await expect(page.getByRole("heading", { name: "Becoming a Developer", level: 3 })).toBeInViewport();
   });
 
-  test("Meisel and GimmalSoft show as coming soon, not links", async ({ page }) => {
+  test("Meisel and GimmalSoft are linked sections, not coming soon", async ({ page }) => {
     await page.goto("/career/act-ii");
     const toc = page.getByRole("navigation", { name: "Jump to" });
-    await expect(toc.getByText("Meisel")).toBeVisible();
-    await expect(toc.getByRole("link", { name: /Meisel|GimmalSoft/ })).toHaveCount(0);
+    await expect(toc.getByText("coming soon")).toHaveCount(0);
+
+    await toc.getByRole("link", { name: "Meisel", exact: true }).click();
+    await expect(page).toHaveURL(/#meisel$/);
+    await expect(page.getByRole("heading", { name: "Meisel", level: 2, exact: true })).toBeInViewport();
+
+    await toc.getByRole("link", { name: "GimmalSoft", exact: true }).click();
+    await expect(page).toHaveURL(/#gimmal$/);
   });
 });

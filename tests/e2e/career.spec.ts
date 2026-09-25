@@ -23,17 +23,20 @@ test.describe("/career", () => {
   });
 
   test("chronological TOC links to the Act stubs", async ({ page }) => {
+    // Scope to the TOC: the header nav also links to each Act.
+    const toc = page.getByRole("navigation", { name: "Chronologically" });
+
     await page.goto("/career");
-    await page.locator('a[href="/career/act-i"]').click();
+    await toc.locator('a[href="/career/act-i"]').click();
     await expect(page).toHaveURL(/\/career\/act-i$/);
     await expect(page.getByRole("heading", { name: "An Unexpected Fork", level: 1 })).toBeVisible();
 
     await page.goto("/career");
-    await page.locator('a[href="/career/act-ii"]').click();
+    await toc.locator('a[href="/career/act-ii"]').click();
     await expect(page).toHaveURL(/\/career\/act-ii$/);
 
     await page.goto("/career");
-    await page.locator('a[href="/career/act-iii"]').click();
+    await toc.locator('a[href="/career/act-iii"]').click();
     await expect(page).toHaveURL(/\/career\/act-iii$/);
   });
 
