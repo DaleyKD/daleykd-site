@@ -5,6 +5,8 @@ export default function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
+    // Read the theme after mount so server and client markup match on hydration.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setDark(document.documentElement.classList.contains('dark'));
   }, []);
 
