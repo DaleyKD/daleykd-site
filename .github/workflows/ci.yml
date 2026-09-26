@@ -1,8 +1,8 @@
 name: CI
 
-# Runs for every branch except main. Nothing gets deployed from here; deploys
-# stay manual (`npm run deploy`). `check` lints, type-checks, and builds;
-# `e2e` runs the Playwright suite against the dev server.
+# Runs for every branch except main. Nothing gets deployed from here: merges
+# to main deploy automatically via Cloudflare Workers Builds. `check` lints,
+# type-checks, and builds; `e2e` runs the Playwright suite against the dev server.
 on:
   push:
     branches-ignore: [main]
