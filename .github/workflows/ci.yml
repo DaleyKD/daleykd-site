@@ -1,0 +1,60 @@
+name: CI
+
+# Runs for every branch except main. Nothing gets deployed from here; deploys
+# stay manual (`npm run deploy`). `check` lints, type-checks, and builds;
+# `e2e` runs the Playwright suite against the dev server.
+on:
+  push:
+    branches-ignore: [main]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    name: Lint and build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - name: Lint (ESLint + astro check)
+        run: npm run lint
+      - name: Build
+        run: npm run build
+
+  e2e:
+    name: End-to-end tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 26
+          cache: npm
+      - run: npm ci
+      - name: Install Playwright browser
+        run: npx playwright install --with-deps chromium
+      # `astro dev` detaches into the background on its own, which makes
+      # Playwright's webServer config exit early. Start it here and wait for
+      # it; the config reuses a server that is already running.
+      - name: Start dev server
+        run: |
+          npx astro dev --background
+          curl --fail --silent --retry 30 --retry-delay 1 --retry-connrefused http://localhost:4321 > /dev/null
+      - name: Run Playwright tests
+        run: npm run test:e2e
+      - name: Upload test results
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: test-results/
+          if-no-files-found: ignore
