@@ -1,3 +1,15 @@
+## Workflow
+
+Work on local branches, not `main`. Name branches `[purpose]/[description-slug]`, e.g.:
+
+- `chore/npm-updates`
+- `bug/gh-153-bad-login`
+- `feat/gh-173-new-career`
+
+## Cloudflare
+
+Deploys happen automatically via Cloudflare Workers Builds on merge to `main` (see `.github/workflows/ci.yml`). The Cloudflare MCP connector doesn't work in this environment ("invalid address" when opening the page), so don't rely on it. Use the `wrangler` CLI via `npm` instead (e.g. `npx wrangler ...`) for anything that needs direct Cloudflare access.
+
 ## Development
 
 When starting the dev server, use background mode:
